@@ -20,9 +20,11 @@ namespace Parser_task {
             var expressionsStack = new Stack<IExpression>();
             var operations = new Stack<Char>();
             var isChanged = false;
+            var wasWind = false;
 
             for (var i = 0; i < text.Length; i++) {
                 var ch = text[i];
+                isChanged = false;
                 if (supportedOp.ContainsKey(ch)) {
                     ParseUntil(ch, supportedOp, expressionsStack, operations);
                     isChanged = true;
@@ -36,11 +38,15 @@ namespace Parser_task {
                     isChanged = true;
                 }
 
-                if (i == text.Length - 1 && isChanged && operations.Count > 0) {
+                if (i == text.Length - 1 && isChanged) {
                     WindToLastOperation(expressionsStack, operations);
+                    wasWind = true;
                 }
             }
 
+            if (!wasWind) {
+                WindToLastOperation(expressionsStack, operations);
+            }
             
             return expressionsStack.Peek();
         }
